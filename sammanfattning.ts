@@ -11,22 +11,21 @@ addAndHandle(10, 20, (result) => {
 
 //UNKNOWN TYPE: A better alternative to any
 let userInput: unknown;
-let userName: string;
-
 userInput = 5;
 userInput = 'Fredrik';
 //Both are allowed, because unknown can be any type.
 
+let userName: string;
 userName = userInput; //Is not allowed, as we can't say what type unknown is.
-
-let userInput2: any;
-userInput2 = 6;
-userName = userInput2; //This is allowed because TS can't do type inferrence on any.
-
 
 if (typeof userInput === 'string') {
     userName = userInput; //Allowed because TS knows that userInput is of type string.
 }
+
+let userInput2: any;
+userInput2 = 6;
+userName = userInput2; //Is allowed because TS can't do type inferrence on any.
+
 
 //SPREAD OPERATOR: Write out all elements of an object
 const hobbies = ['Sports', 'cooking'];
@@ -43,20 +42,23 @@ const copiedPerson = { ...person }; //Copy the values of person into a new objec
 
 const sameRefAsPerson = person; //Both points to the same object reference in memory. Changing value in person also changes in sameRefAsPerson.
 
+
 //REST PARAMETERS: Use an undefined number of input parameters
-const add = (...numbers: number[]) => {
+const addMany = (...numbers: number[]) => {
     return numbers.reduce((curResult, curValue) => {
         return curResult + curValue;
     }, 0);
 };
 
-const addedNumbers = add(5, 10, 6, 3);
+const addedNumbers = addMany(5, 10, 6, 3);
+
 
 //ARRAY AND OBJECT DESTRUCTURING: Pull out elements from an array or object
 const [hobby1, hobby2, ...remainingHobbies] = hobbies; //Arrays are ordered lists, the first extracted element is the first element of the array.
 
 const {name: usersName, age} = person; //Objects are not ordered, therefore we need to specfy which element to extract.
 //To assign a new name to the 'name' element, use : .
+
 
 //THIS
 var x = new MyObject();
@@ -68,12 +70,12 @@ window.addEventListener('click', x.printThing, 10); // DANGER, method is not inv
 
 window.addEventListener('click', () => x.printThing(), 10); // SAFE, method is invoked in the same expression
 
-
 //Also
 var x = new SomeClass();
 // SAFE: Functions created from function.bind always preserve 'this'
 window.setTimeout(x.someMethod.bind(x), 100);
-//Bad thing is that .bind does not keep the type safety of TS.
+//Bad thing is that .bind does not keep the type safety of TS (what does it mean?)
+
 
 //SHORTHAND INITIALIZATION: Save some rows by initializing properties in the constructor.
 class department {
@@ -98,6 +100,7 @@ class department {
     }
 }
 
+
 //PROTECTED AND PRIVATE: A private property is only accessible from inside the base class.
 //A protected property is accessible in the base class as well as in classes extending the base class.
 
@@ -114,6 +117,7 @@ class SayMyName extends MyName {
         console.log(this.firstName); //Would not work if firstName was private
     }   
 }
+
 
 //GET AND SET: Working with private properties from outside of a class
 class SuperPrivate {
@@ -138,8 +142,8 @@ const superPrivate = new SuperPrivate();
 console.log(superPrivate.allEmployees);
 superPrivate.newEmployee = 'it';
 
-//STATIC PROPERTIES AND METHODS: Access properties and methods without instantiating a class
 
+//STATIC PROPERTIES AND METHODS: Access properties and methods without instantiating a class
 class StaticStuff {
     static whyIsThisSoCool = 'No instantiation!';
 
@@ -151,6 +155,7 @@ class StaticStuff {
 console.log(StaticStuff.whyIsThisSoCool);
 StaticStuff.objectWithNameProperty
 
+
 //ABSTRACT CLASS: Tell an extending class to create a defined method
 abstract class Comedian {
     abstract saySomethingFunny(joke: string): void;
@@ -161,6 +166,7 @@ class ProspectComedian extends Comedian {
         console.log(joke);
     }
 }
+
 
 //SINGLETONS AND PRIVATE CONSTRUCTORS: Only allow for one instance of a class to be created
 class Earth {
@@ -184,19 +190,57 @@ const anEarth = new Earth(); //Not possible because of private constructor
 const ourEarth = Earth.getInstance();
 const sameEarth = Earth.getInstance();
 
+
 //INTERFACE: Describes structures
 interface Greetable{
     name: string;
-
     greet(phrase: string): void;
 }
 
 class Person implements Greetable {
-
     name = 'Fredrik';
 
-    greet(phrase: string) {
+    greet(phrase: string): void {
         console.log(name + " says " + phrase);
     }
 }
+
+
+//TYPE CASTING: Tell TS the type of the element as TS can't infer types from HTML files.
+const inputEl = document.getElementById('input') as HTMLInputElement;
+
+//This is the safest code as it only says that the element has a type if the element actually exist:
+const inputEl2 = document.getElementById('input');
+if (inputEl2) {
+	(inputEl2 as HTMLInputElement).value = 'hej';
+}
+
+
+//FUNCTION OVERLOAD: Define different combinations of input and output types for the same function so that TS can know what to do with returned values
+type Combinable = string | number;
+function add(a: number, b: number): number;
+function add(a: string, b: string): string;
+function add(a: Combinable, b: Combinable) {
+    if (typeof a === 'string' && typeof b === 'string') {
+        return a + b;
+    }
+    return +a + +b;
+}
+
+const addedString = add('hej','padej');
+addedString.split('');
+
+const addedNumber = add(5,6);
+addedNumber.split(''); //can not do this with numbers
+
+
+//KEYOF CONSTRAINT: See that an object contains a specific key
+function extractAndConvert<T extends object, U extends keyof T>(
+    obj: T,
+    key: U
+  ) {
+    return 'Value: ' + obj[key];
+  }
+  
+  extractAndConvert({ name: 'Max' }, 'name');
 
