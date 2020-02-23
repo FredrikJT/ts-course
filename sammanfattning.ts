@@ -250,4 +250,18 @@ function extractAndConvert<T extends object, U extends keyof T>(
 
 //AUTOBIND: Bind the this of a method to the class
 
-//NAMESPACES 141
+//NAMESPACES 141: A worse way to chare code between files than importing.
+
+//VARIOUS IMPORT AND EXPORT SYNTAXES
+import * as Validatable from '../validatable.js';
+const validation = Validatable.validate;
+
+import { autobind as Autobind } from '../autobind.js';
+
+///Otherfile
+export default Afunction {
+    console.log('hej');
+}
+
+///This file
+import TheDefaultExport from 'Otherfile.js'; //You name the default import something.
